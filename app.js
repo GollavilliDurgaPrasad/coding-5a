@@ -1,3 +1,4 @@
+
 const express = require('express')
 const path = require('path')
 
@@ -49,9 +50,6 @@ app.get('/movies/', async (request, response) => {
   response.send(moviesArray.map(each => dbresponse(each)))
 })
 
-
-
-
 //add movie
 app.post('/movies/', async (request, response) => {
   const getDetails = request.body
@@ -61,9 +59,9 @@ app.post('/movies/', async (request, response) => {
                 movie(director_id,movie_name,lead_actor)
             VALUES(
             ${directorId},
-            `${movieName}`,
-            `${leadActor}`
-            );`;
+            '${movieName}',
+            '${leadActor}'
+            );`
 
   const dbResponse = await db.run(moviesQuery)
   response.send('Movie Sucessfully Added')
@@ -71,16 +69,16 @@ app.post('/movies/', async (request, response) => {
 
 //update movies
 app.put('/movies/:movieId/', async (request, response) => {
-  const {moviesId} = request.params
+  const {movieId} = request.params
   const getBody = request.body
-  const {directorId, movieName, leadActor} = getDetails
+  const {directorId, movieName, leadActor} = getBody
   const updatemoviesQuery = `
   UPDATE
     movie
   SET 
     director_id = ${directorId},
-    movie_name =`${movieName}`,
-    lead_actor = `${leadActor}`
+    movie_name ='${movieName}',
+    lead_actor = '${leadActor}'
   WHERE
     movie_id = ${movieId};`
   await db.run(updatemoviesQuery)
@@ -91,7 +89,7 @@ app.get('/movies/:movieId/', async (request, response) => {
   const {movieId} = request.params
   const moviequery = `
     SELECT * FROM movie
-        WHERE movie_id=${movieId}`
+        WHERE movie_id = ${movieId}`
   const result = await db.get(moviequery)
   response.send(result)
 })
@@ -100,11 +98,11 @@ app.delete('movies/:movieId', async (request, response) => {
   const {movieId} = request.params
   const moviequery = `
     DELETE 
-      FROM
-      movie
+        FROM
+            movie
       WHERE 
-      movie_id=${movieId};`
-  await db.run(moviequery)
+      movie_id= ${movieId};`
+  const dbresponse = await db.run(moviequery)
   response.send('Movie Removed')
 })
 // get directors list
@@ -116,15 +114,13 @@ app.get('/directors/', async (request, response) => {
   const moviesArray = await db.all(moviesQuery)
   response.send(moviesArray.map(each => dbresponses(each)))
 })
-app.get(
-  '/movies/:moviesId/directors/:directorId',
-  async (request, response) => {
-    const {movieId, directorId} = request.params
-    const query = `
-  SELECT  movie_name FROM (movie INNERJOIN directors ON movie.director_id = directors.director_id)
-  where director_id = ${directorId}`
-    const results = await db.get(query)
-    response.send(results)
-  },
-)
+app.get('/directors/:directorId/movies/', async (request, response) => {
+  const {directorId} = request.params
+  const query = `select movie_name from movie where director_id = ${directorId}
+   
+
+  `
+  const results = await db.get(query)
+  response.send(results)
+})
 module.exports = app
