@@ -64,7 +64,7 @@ app.post('/movies/', async (request, response) => {
             );`
 
   const dbResponse = await db.run(moviesQuery)
-  response.send('Movie Sucessfully Added')
+  response.send('Movie Successfully Added')
 })
 
 //update movies
@@ -94,7 +94,7 @@ app.get('/movies/:movieId/', async (request, response) => {
   response.send(result)
 })
 ///delete movies
-app.delete('movies/:movieId', async (request, response) => {
+app.delete('movies/:movieId/', async (request, response) => {
   const {movieId} = request.params
   const moviequery = `
     DELETE 
