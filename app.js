@@ -1,4 +1,3 @@
-
 const express = require('express')
 const path = require('path')
 
@@ -41,6 +40,7 @@ const dbresponses = dbObject => {
     directorName: dbObject.director_name,
   }
 }
+
 //Get movies API
 app.get('/movies/', async (request, response) => {
   const moviesQuery = `
@@ -91,25 +91,29 @@ app.get('/movies/:movieId/', async (request, response) => {
     SELECT * FROM movie
         WHERE movie_id = ${movieId}`
   const result = await db.get(moviequery)
-  response.send(result)
+  const convertedObj = {
+    movieId: result.movie_id,
+    directorId: result.director_id,
+    movieName: result.movie_name,
+    leadActor: result.lead_actor,
+  }
+  response.send(convertedObj)
+  console.log(result)
 })
 ///delete movies
-app.delete('movies/:movieId/', async (request, response) => {
+app.delete('/movies/:movieId/', async (request, response) => {
   const {movieId} = request.params
-  const moviequery = `
-    DELETE 
-        FROM
-            movie
-      WHERE 
-      movie_id= ${movieId};`
-  const dbresponse = await db.run(moviequery)
+  const moviequerys = `
+    DELETE FROM movie WHERE movie_id = ${movieId};`
+  const dbresponse = await db.run(moviequerys)
   response.send('Movie Removed')
+  console.log('ss')
 })
 // get directors list
 
 app.get('/directors/', async (request, response) => {
   const moviesQuery = `
-    select director_id,director_name From director
+    select director_id, director_name From director
     ;`
   const moviesArray = await db.all(moviesQuery)
   response.send(moviesArray.map(each => dbresponses(each)))
@@ -117,10 +121,13 @@ app.get('/directors/', async (request, response) => {
 app.get('/directors/:directorId/movies/', async (request, response) => {
   const {directorId} = request.params
   const query = `select movie_name from movie where director_id = ${directorId}
-   
-
   `
   const results = await db.get(query)
-  response.send(results)
+  const convertedobject = {
+    movieName: results.movie_name,
+  }
+
+  response.send(convertedobject)
+  console.log(results)
 })
 module.exports = app
