@@ -14,7 +14,7 @@ Content-Type:application/json
 }
 ####
 // get the movie using movie id
-GET http://localhost:3000/movies/12/
+GET http://localhost:3000/movies/1/
 
 ####
 
@@ -30,7 +30,7 @@ Content-Type:application/json
 
 /// delete the movie using movieId
 ####
-DELETE http://localhost:3000/movies/15/
+DELETE http://localhost:3000/movies/1/
 
 
 ///get directors list 
@@ -40,4 +40,4 @@ GET http://localhost:3000/directors/
 
 /// get movies using the specific directorId
  
-GET http://localhost:3000/directors/:directorId/movies/
+GET http://localhost:3000/directors/2/movies/
